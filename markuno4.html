@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - Meet The Team</title>
+  <style>
+    /* --- RESET & GLOBAL FONTS --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Font Definitions */
+    .heading-font {
+      font-family: "Franklin Gothic Demi Cond", "Franklin Gothic Medium", "Arial Narrow", sans-serif;
+      font-variant: small-caps;
+    }
+
+    .body-font {
+      font-family: "Arial Nova Cond Light", "Arial Nova Cond", "Arial Narrow", sans-serif;
+      font-weight: 300;
+    }
+
+    /* --- HERO SECTION --- */
+    .hero-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      align-items: center;
+      width: 100%;
+      min-height: 70vh;
+    }
+
+    .hero-text {
+      padding: 2rem 4rem;
+      text-align: center;
+    }
+
+    .hero-text h1 {
+      font-size: 48pt;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-text p {
+      font-size: 24pt;
+      color: #e0e0e0;
+    }
+
+    /* --- SPOTLIGHT COMPONENT --- */
+    .spotlight-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .spotlight-container {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .spotlight-container .layer {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .spotlight-container .base-color,
+    .spotlight-container .cutout {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .spotlight-container .base-sketch {
+      position: relative;
+      z-index: 0;
+    }
+
+    .spotlight-container .base-color {
+      z-index: 1;
+      opacity: 1;
+    }
+
+    .spotlight-container .cutout {
+      z-index: 2;
+      opacity: 0;
+    }
+
+    .spotlight-container .always-on {
+      opacity: 1;
+    }
+
+    .spotlight-container .zone {
+      position: absolute;
+      top: 10%;
+      height: 90%;
+      z-index: 10;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+    }
+
+    .zone-1 { left: 2%;    width: 23%; }
+    .zone-2 { left: 20%;   width: 17%; }
+    .zone-3 { left: 37%;   width: 13%; }
+    .zone-4 { left: 50%;   width: 18%; }
+    .zone-5 { left: 68%;   width: 13%; }
+    .zone-6 { left: 81%;   width: 17%; }
+
+    .spotlight-container:has(.zone:hover) .base-color {
+      opacity: 0;
+    }
+
+    .spotlight-container:has(.zone-1:hover) .person-1,
+    .spotlight-container:has(.zone-2:hover) .person-2,
+    .spotlight-container:has(.zone-3:hover) .person-3,
+    .spotlight-container:has(.zone-4:hover) .person-4,
+    .spotlight-container:has(.zone-5:hover) .person-5,
+    .spotlight-container:has(.zone-6:hover) .person-6 {
+      opacity: 1;
+      z-index: 3;
+    }
+
+    /* --- HIDE RADIO CONTROLLERS --- */
+    .tab-radio {
+      display: none;
+    }
+
+    /* --- STICKY HEADER & TABS --- */
+    .sticky-header-container {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg, #000000 0%, #000000 80%, rgba(0, 0, 0, 0) 100%);
+      z-index: 100;
+      text-align: center;
+      padding: 1.5rem 0 1rem;
+    }
+
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+	.tab-nav a {
+		text-decoration: none;
+	}
+    .tab-label {
+      font-size: 28pt;
+      letter-spacing: 2px;
+      color: #555555;
+      cursor: pointer;
+      transition: color 0.3s ease, border-bottom 0.3s ease;
+      padding-bottom: 0.2rem;
+      text-decoration: none;
+    }
+
+    .tab-label:hover {
+      color: #ffffff;
+    }
+
+    /* Tab Highlights based on Radio Selection */
+    #tab-team-check:checked ~ .sticky-header-container label[for="tab-team-check"],
+    #tab-projects-check:checked ~ .sticky-header-container label[for="tab-projects-check"],
+    #tab-work-check:checked ~ .sticky-header-container label[for="tab-work-check"] {
+      color: #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    /* --- FLEXBOX WRAPPER & DYNAMIC REORDERING --- */
+    .tab-content-wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Default Order (Meet -> View -> Work) */
+    .section-team { order: 1; }
+    .section-projects { order: 2; }
+    .section-work { order: 3; }
+
+    /* Order on "View Projects" Click: Projects -> Work -> Team */
+    #tab-projects-check:checked ~ .tab-content-wrapper .section-projects { order: 1; }
+    #tab-projects-check:checked ~ .tab-content-wrapper .section-work     { order: 2; }
+    #tab-projects-check:checked ~ .tab-content-wrapper .section-team     { order: 3; }
+
+    /* Order on "Work With Us" Click: Work -> Team -> Projects */
+    #tab-work-check:checked ~ .tab-content-wrapper .section-work     { order: 1; }
+    #tab-work-check:checked ~ .tab-content-wrapper .section-team     { order: 2; }
+    #tab-work-check:checked ~ .tab-content-wrapper .section-projects { order: 3; }
+
+    /* --- REUSABLE CARD SECTIONS --- */
+    .content-section {
+      max-width: 1200px;
+      margin: 2rem auto 6rem;
+      padding: 0 2rem;
+      scroll-margin-top: 125px;
+    }
+
+    .section-title-divider {
+      font-size: 32pt;
+      text-align: center;
+      margin: 4rem 0 2rem;
+      letter-spacing: 2px;
+      border-bottom: 1px solid #222;
+      padding-bottom: 1rem;
+    }
+
+    .member-card {
+      display: flex;
+      flex-direction: column; /* Default Mobile View */
+      align-items: center;
+      gap: 2rem;
+      scroll-margin-top: 125px;
+    }
+
+    .member-photo {
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .member-info {
+      width: 100%;
+      text-align: center; /* Centered for mobile */
+    }
+
+    .member-name {
+      font-size: 28pt;
+      margin-bottom: 0.2rem;
+    }
+
+    .member-title {
+      font-size: 16pt;
+      color: #888888;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* --- CTA BUTTON STYLING --- */
+    .cta-button {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.8rem;
+      border: 1px solid #ffffff;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14pt;
+      letter-spacing: 0.5px;
+      background-color: #000000;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .cta-button:hover {
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+    /* Mobile Alignment */
+    @media (max-width: 767px) {
+      .cta-button {
+        margin-top: 1.25rem;
+      }
+    }
+
+    /* --- BIO TOGGLE & TEXT STYLES --- */
+    .member-bio-wrapper {
+      line-height: 1.6;
+      font-size: 13pt;
+      color: #dddddd;
+    }
+
+    .bio-text {
+      display: inline;
+    }
+
+    .bio-toggle {
+      display: none;
+    }
+
+    .read-more-btn {
+      font-weight: bold;
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-block;
+      margin-left: 0.3rem;
+    }
+
+    .read-more-btn::after {
+      content: " Read more >";
+    }
+
+    /* --- WORK WITH US FORM STYLES --- */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      max-width: 700px;
+      margin: 2rem auto;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 1rem;
+      background-color: #111111;
+      border: 1px solid #333333;
+      color: #ffffff;
+      font-size: 12pt;
+      outline: none;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      border-color: #ffffff;
+    }
+
+    .contact-form textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    /* --- MOBILE BEHAVIOR (Under 768px) --- */
+    @media (max-width: 767px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-text {
+        padding: 3rem 1rem;
+      }
+
+      .tab-label {
+        font-size: 18pt;
+      }
+
+      .full-bio {
+        display: none;
+      }
+
+      .bio-toggle:checked ~ .bio-text .full-bio {
+        display: inline;
+      }
+
+      .bio-toggle:checked ~ .read-more-btn::after {
+        content: "< Read Less";
+      }
+
+      .bio-toggle:checked ~ .read-more-btn {
+        display: block;
+        margin-top: 0.5rem;
+        margin-left: 0;
+      }
+    }
+
+    /* --- DESKTOP LAYOUT OVERRIDES (WEB FORMAT) --- */
+    @media (min-width: 768px) {
+      .member-card {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .member-info {
+        text-align: left;
+      }
+
+      .member-photo {
+        max-width: 380px;
+      }
+
+      .full-bio {
+        display: inline !important;
+      }
+
+      .read-more-btn {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="hero-container">
+    <section class="hero-text heading-font">
+      <h1>Mark Uno</h1>
+      <p>ONE MAN. MANY TALENTS.</p>
+    </section>
+
+    <section class="spotlight-wrapper">
+      <div class="spotlight-container">
+        <img src="sketch-group.png" alt="Team Sketch" class="layer base-sketch" />
+        <img src="color-group.png" alt="Team Color" class="layer base-color" />
+
+        <img src="person1-cutout.png" alt="Person 1" class="layer cutout person-1" />
+        <img src="person2-cutout.png" alt="Person 2" class="layer cutout person-2" />
+        <img src="person3-cutout.png" alt="Person 3" class="layer cutout person-3" />
+        <img src="person4-cutout.png" alt="Person 4" class="layer cutout person-4" />
+        <img src="person5-cutout.png" alt="Person 5" class="layer cutout person-5" />
+        <img src="person6-cutout.png" alt="Person 6" class="layer cutout person-6" />
+        <img src="gradient.png" alt="Gradient Overlay" class="layer cutout always-on" />
+
+        <a href="#member-1" class="zone zone-1" aria-label="View Person 1 Profile"></a>
+        <a href="#member-2" class="zone zone-2" aria-label="View Person 2 Profile"></a>
+        <a href="#member-3" class="zone zone-3" aria-label="View Person 3 Profile"></a>
+        <a href="#member-4" class="zone zone-4" aria-label="View Person 4 Profile"></a>
+        <a href="#member-5" class="zone zone-5" aria-label="View Person 5 Profile"></a>
+        <a href="#member-6" class="zone zone-6" aria-label="View Person 6 Profile"></a>
+      </div>
+    </section>
+  </main>
+
+  <input type="radio" id="tab-team-check" name="portfolio-tabs" class="tab-radio" checked />
+  <input type="radio" id="tab-projects-check" name="portfolio-tabs" class="tab-radio" />
+  <input type="radio" id="tab-work-check" name="portfolio-tabs" class="tab-radio" />
+
+  <div class="sticky-header-container heading-font">
+    <nav class="tab-nav">
+      <a href="#main-content">
+        <label for="tab-team-check" class="tab-label">MEET THE TEAM</label>
+      </a>
+      <a href="#main-content">
+        <label for="tab-projects-check" class="tab-label">VIEW PROJECTS</label>
+      </a>
+      <a href="#main-content">
+        <label for="tab-work-check" class="tab-label">WORK WITH US</label>
+      </a>
+    </nav>
+  </div>
+
+  <div id="main-content" class="tab-content-wrapper">
+
+    <section class="content-section section-team">
+      <h2 class="section-title-divider heading-font">MEET THE TEAM</h2>
+
+      <article class="member-card" id="member-1" style="margin-top: 3rem;">
+        <img src="RobotMark.png" alt="Marc" class="member-photo" />
+        <div class="member-info">
+          <h3 class="member-name heading-font">Marc Diuno</h3>
+          <p class="member-title body-font">Robotics Lead</p>
+          <div class="member-bio-wrapper body-font">
+            <input type="checkbox" id="toggle-1" class="bio-toggle" />
+            <p class="bio-text">
+              Marc joined the team when we started exploring the idea of a robotic
+              <span class="full-bio">
+                helper in the workshop. He came up with the K3VN prototype, and has been the lead designer, CAD modeler, 3D printing expert, and soldering and wiring technician on the project.
+              </span>
+            </p>
+            <label for="toggle-1" class="read-more-btn"></label>
+            <p></p>
+            <a href="#marc-work" class="cta-button heading-font">View Marc's Work &gt;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" id="member-2" style="margin-top: 5rem;">
+        <img src="CostumeMark.png" alt="Person 2" class="member-photo" />
+        <div class="member-info">
+          <h3 class="member-name heading-font">Markus Unodiuno</h3>
+          <p class="member-title body-font">Costume Designer</p>
+          <div class="member-bio-wrapper body-font">
+            <input type="checkbox" id="toggle-2" class="bio-toggle" />
+            <p class="bio-text">
+              Markus’s first costume for us was a Tony Stark suit complete with 
+              <span class="full-bio">
+                a sewn in hand-made glowing Arcreactor. Since then, he’s gone on to create costumes like an alien in a UFO, many pirates, and even a Spider-Man suit modeled after the Tom Holland Spider-man’s “Homemade Suit.”
+              </span>
+            </p>
+            <label for="toggle-2" class="read-more-btn"></label>
+            <p></p>
+            <a href="#markus-work" class="cta-button heading-font">View Markus's Work &gt;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" id="member-3" style="margin-top: 5rem;">
+        <img src="WebDevMark.png" alt="Mark" class="member-photo" />
+        <div class="member-info">
+          <h3 class="member-name heading-font">Mark Unodiuno</h3>
+          <p class="member-title body-font">Web Developer</p>
+          <div class="member-bio-wrapper body-font">
+            <input type="checkbox" id="toggle-3" class="bio-toggle" />
+            <p class="bio-text">
+              Mark leads our web development and digital architecture, bringing designs to life with smooth layouts,
+              <span class="full-bio">
+                custom interactive web experiences, clean front-end engineering, and responsive CSS frameworks designed for maximum visual impact across all devices.
+              </span>
+            </p>
+            <label for="toggle-3" class="read-more-btn"></label>
+            <p></p>
+            <a href="#mark-work" class="cta-button heading-font">View Mark's Work &gt;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" id="member-4" style="margin-top: 5rem;">
+        <img src="ArtMark.png" alt="Marc" class="member-photo" />
+        <div class="member-info">
+          <h3 class="member-name heading-font">Marc Diuno</h3>
+          <p class="member-title body-font">Concept Artist</p>
+          <div class="member-bio-wrapper body-font">
+            <input type="checkbox" id="toggle-4" class="bio-toggle" />
+            <p class="bio-text">
+              Marc spearheads the visual visual development and initial illustration phase for all physical and digital projects,
+              <span class="full-bio">
+                crafting original sketch art, character concepts, and detailed color maps that form the foundational blueprints for our build phase.
+              </span>
+            </p>
+            <label for="toggle-4" class="read-more-btn"></label>
+            <p></p>
+            <a href="#marc-work" class="cta-button heading-font">View Marc's Work &gt;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" id="member-5" style="margin-top: 5rem;">
+        <img src="PhotoMark.png" alt="Marc" class="member-photo" />
+        <div class="member-info">
+          <h3 class="member-name heading-font">Marc Diuno</h3>
+          <p class="member-title body-font">Media & Photography Lead</p>
+          <div class="member-bio-wrapper body-font">
+            <input type="checkbox" id="toggle-5" class="bio-toggle" />
+            <p class="bio-text">
+              Marc captures every step of our creative process through studio photography,
+              <span class="full-bio">
+                cinematic behind-the-scenes documentation, photo retouching, and asset management for showcase displays.
+              </span>
+            </p>
+            <label for="toggle-5" class="read-more-btn"></label>
+            <p></p>
+            <a href="#marc-work" class="cta-button heading-font">View Marc's Work &gt;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" id="member-6" style="margin-top: 5rem;">
+        <img src="GameDevMark.png" alt="Mark" class="member-photo" />
+        <div class="member-info">
+          <h3 class="member-name heading-font">Mark Unodiuno</h3>
+          <p class="member-title body-font">Game Dev Lead</p>
+          <div class="member-bio-wrapper body-font">
+            <input type="checkbox" id="toggle-6" class="bio-toggle" />
+            <p class="bio-text">
+              Markus began working with us as a novice game developer and now leads interactive design,
+              <span class="full-bio">
+                taking projects from initial prototype mechanics to full engine deployment with titles like PUNCHY GAME, Acknee Inc., and The Secret of the Deep.
+              </span>
+            </p>
+            <label for="toggle-6" class="read-more-btn"></label>
+            <p></p>
+            <a href="#mark-work" class="cta-button heading-font">View Mark's Work &gt;</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="content-section section-projects">
+      <h2 class="section-title-divider heading-font">FEATURED PROJECTS</h2>
+
+      <article class="member-card" style="margin-top: 3rem;">
+        <img src="k3vn.png" alt="K3VN Project" class="member-photo" />
+        <div class="member-info">
+          <h3 class="member-name heading-font">K3VN</h3>
+          <p class="member-title body-font">Robotics</p>
+          <div class="member-bio-wrapper body-font">
+            <input type="checkbox" id="toggle-proj-1" class="bio-toggle" />
+            <p class="bio-text">
+              An autonomous workshop assistant prototype equipped with custom CAD 3D-printed chassis components,
+              <span class="full-bio">
+                precision micro-soldered circuit boards, custom servo motor configurations, and custom sensor-based navigation routines.
+              </span>
+            </p>
+            <label for="toggle-proj-1" class="read-more-btn"></label>
+            <p></p>
+            <a href="#k3vn-demo" class="cta-button heading-font">Project Demo &gt;</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" style="margin-top: 5rem;">
+        <img src="acknee.png" alt="Acknee Inc. Project" class="member-photo" />
+        <div class="member-info">
+          <h3 class="member-name heading-font">Acknee Inc.</h3>
+          <p class="member-title body-font">Game</p>
+          <div class="member-bio-wrapper body-font">
+            <input type="checkbox" id="toggle-proj-2" class="bio-toggle" />
+            <p class="bio-text">
+              A stylized indie game experience featuring fast-paced action mechanics, hand-drawn sprite animations,
+              <span class="full-bio">
+                custom audio design, and interactive level scripting built entirely in-house.
+              </span>
+            </p>
+            <label for="toggle-proj-2" class="read-more-btn"></label>
+            <p></p>
+            <a href="#acknee-demo" class="cta-button heading-font">Project Demo &gt;</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="content-section section-work">
+      <h2 class="section-title-divider heading-font">WORK WITH US</h2>
+
+      <div class="member-card" style="margin-top: 3rem; flex-direction: column; align-items: center; text-align: center;">
+        <div class="member-info" style="text-align: center; max-width: 800px; margin: 0 auto;">
+          <h3 class="member-name heading-font">LET'S BUILD SOMETHING TOGETHER</h3>
+          <p class="member-title body-font">Commissions & Technical Contracts</p>
+          
+          <p class="body-font" style="font-size: 14pt; color: #dddddd; line-height: 1.6; margin-bottom: 2rem;">
+            Have a project in mind, need custom hardware prototyping, prop commissions, or game development assistance? Drop us a message below and let us know how we can help!
+          </p>
+
+          <form class="contact-form body-font">
+            <input type="text" placeholder="Your Name" required />
+            <input type="email" placeholder="Your Email Address" required />
+            <textarea placeholder="Tell us about your project or inquiry..." required></textarea>
+            <button type="submit" class="cta-button heading-font" style="align-self: center;">Send Message &gt;</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>
