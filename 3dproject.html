@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Featured Projects & 3D Showcase</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.6.6/processing.min.js"></script>
+
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      padding: 40px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .showcase-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .main-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    /* Grid split locked to 50% window width */
+    .featured-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 40px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Dynamic Media Housing (Canvas OR 3D Model) */
+    .display-container {
+      justify-self: end;
+      width: 400px;
+      height: 400px;
+      background: #111;
+      position: relative;
+    }
+
+    /* Style the canvas to fill the display box */
+    #myCanvas {
+      display: block;
+    }
+
+    /* Style the 3D viewer element */
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      background-color: #111111;
+      --poster-color: transparent;
+    }
+
+    /* Info Panel on the right */
+    .info-container {
+      justify-self: start;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .info-container h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .info-container p {
+      margin: 0;
+      font-size: 14px;
+      color: #cccccc;
+      line-height: 1.4;
+    }
+
+    .meta-item {
+      font-size: 14px;
+      color: #dddddd;
+    }
+
+    .read-more-btn {
+      display: inline-block;
+      align-self: flex-start;
+      margin-top: 10px;
+      padding: 10px 24px;
+      border: 1px solid #ffffff;
+      background: transparent;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .read-more-btn:hover {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    /* Bottom Thumbnail Selector */
+    .selector-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .thumb-card {
+      width: 60px;
+      height: 60px;
+      background: #222222;
+      border: 2px solid transparent;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .thumb-card:hover {
+      opacity: 0.8;
+    }
+
+    .thumb-card.active {
+      border-color: #d15bb8;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="showcase-container">
+    <h1 class="main-title">Featured Projects</h1>
+
+    <div class="featured-card">
+      <div class="display-container" id="mediaBox">
+        <canvas id="myCanvas"></canvas>
+        <model-viewer id="myModelViewer" style="display: none;" auto-rotate camera-controls></model-viewer>
+      </div>
+
+      <div class="info-container">
+        <h2 id="projectTitle">Project Title</h2>
+        <p id="projectDescription">Project description details go here.</p>
+        
+        <div class="meta-item">Date: <span id="projectDate">7/31/2026</span></div>
+        <div class="meta-item">Author: <span id="projectAuthor">Me McMeson</span></div>
+        <div class="meta-item">Type/Languages: <span id="projectLang">JavaScript</span></div>
+
+        <a id="projectLink" href="#" class="read-more-btn">Read More &gt;</a>
+      </div>
+    </div>
+
+    <div class="selector-row" id="cardContainer"></div>
+  </div>
+
+  <script>
+    var currentProcessingInstance = null;
+
+    // Mix of JS Code projects and 3D Model items
+    var projects = [
+      {
+        id: 0,
+        type: "code",
+        title: "Bouncing Ball Code",
+        description: "Standard 2D canvas interactive script built with ProcessingJS.",
+        date: "7/31/2026",
+        author: "Me McMeson",
+        languages: "JavaScript",
+        link: "#",
+        width: 400,
+        height: 400,
+        code: function(p) {
+          with (p) {
+            size(400, 400); frameRate(30);
+            var x = 0;
+            var draw = function() {
+              background(180, 70, 150); fill(255, 200, 50);
+              ellipse(x, 200, 60, 60);
+              x = (x + 3) % width;
+            };
+          }
+        }
+      },
+      {
+        id: 1,
+        type: "3d",
+        title: "3D Astronaut Helmet",
+        description: "Interactive 3D model designed in Blender. Click and drag to rotate the view or scroll to zoom.",
+        date: "8/01/2026",
+        author: "Me McMeson",
+        languages: "3D Design / Blender",
+        link: "#",
+        width: 400,
+        height: 400,
+        // Sample public 3D model link (Replace with your own .glb file path)
+        modelSrc: "images/holders.glb"
+      },
+      {
+        id: 2,
+        type: "code",
+        title: "Interactive Cursor Field",
+        description: "Tracking mouse vectors on canvas to produce real-time dynamic shape scaling.",
+        date: "8/05/2026",
+        author: "Me McMeson",
+        languages: "JavaScript",
+        link: "#",
+        width: 500,
+        height: 400,
+        code: function(p) {
+          with (p) {
+            size(500, 400); frameRate(30);
+            var draw = function() {
+              background(30); fill(0, 255, 150);
+              ellipse(mouseX, mouseY, 40, 40);
+            };
+          }
+        }
+      },
+      {
+        id: 3,
+        type: "3d",
+        title: "3D Robot Toy",
+        description: "Low-poly 3d character design model with specular metallic materials.",
+        date: "8/10/2026",
+        author: "Me McMeson",
+        languages: "3D Design / GLTF",
+        link: "#",
+        width: 400,
+        height: 400,
+        // Another sample public 3D model link
+        modelSrc: "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb"
+      }
+    ];
+
+    function renderCards() {
+      var container = document.getElementById("cardContainer");
+      container.innerHTML = "";
+
+      projects.forEach(function(proj, index) {
+        var card = document.createElement("div");
+        card.className = "thumb-card" + (index === 0 ? " active" : "");
+        card.id = "card-" + index;
+        card.onclick = function() { selectProject(index); };
+        
+        // Show indicator if it's 3D or Code
+        card.textContent = proj.type === "3d" ? "3D #" + (index + 1) : "JS #" + (index + 1);
+
+        container.appendChild(card);
+      });
+    }
+
+    function selectProject(index) {
+      // Exit active processing script if currently running
+      if (currentProcessingInstance) {
+        currentProcessingInstance.exit();
+        currentProcessingInstance = null;
+      }
+
+      var cards = document.querySelectorAll(".thumb-card");
+      cards.forEach(function(c) { c.classList.remove("active"); });
+      document.getElementById("card-" + index).classList.add("active");
+
+      var selected = projects[index];
+      var canvas = document.getElementById("myCanvas");
+      var modelViewer = document.getElementById("myModelViewer");
+      var mediaBox = document.getElementById("mediaBox");
+
+      // Set display box width & height according to project
+      mediaBox.style.width = selected.width + "px";
+      mediaBox.style.height = selected.height + "px";
+
+      // TOGGLE DISPLAY TYPE
+      if (selected.type === "3d") {
+        // Hide Canvas, Show 3D Viewer
+        canvas.style.display = "none";
+        modelViewer.style.display = "block";
+        modelViewer.src = selected.modelSrc;
+      } else {
+        // Hide 3D Viewer, Show Canvas & Run Processing
+        modelViewer.style.display = "none";
+        canvas.style.display = "block";
+        currentProcessingInstance = new Processing(canvas, selected.code);
+      }
+
+      // Update Info Text Panel
+      document.getElementById("projectTitle").textContent = selected.title;
+      document.getElementById("projectDescription").textContent = selected.description;
+      document.getElementById("projectDate").textContent = selected.date;
+      document.getElementById("projectAuthor").textContent = selected.author;
+      document.getElementById("projectLang").textContent = selected.languages;
+      document.getElementById("projectLink").href = selected.link;
+    }
+
+    window.onload = function() {
+      renderCards();
+      selectProject(0);
+    };
+  </script>
+
+</body>
+</html>
