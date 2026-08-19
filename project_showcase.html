@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Game Projects & 3D Showcase</title>
+  <link rel="icon" href="images/favicon.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.6.6/processing.min.js"></script>
+
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      padding: 40px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .showcase-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .main-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    /* Grid split locked to 50% window width */
+    .featured-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 40px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Dynamic Media Housing (Canvas OR 3D Model) */
+    .display-container {
+      justify-self: end;
+      width: 400px;
+      height: 400px;
+      background: #111;
+      position: relative;
+    }
+
+    /* Style the canvas to fill the display box */
+    #myCanvas {
+      display: block;
+    }
+
+    /* Style the 3D viewer element */
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      background-color: #111111;
+      --poster-color: transparent;
+    }
+
+    /* Info Panel on the right */
+    .info-container {
+      justify-self: start;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .info-container h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .info-container p {
+      margin: 0;
+      font-size: 14px;
+      color: #cccccc;
+      line-height: 1.4;
+    }
+
+    .meta-item {
+      font-size: 14px;
+      color: #dddddd;
+    }
+
+    .read-more-btn {
+      display: inline-block;
+      align-self: flex-start;
+      margin-top: 10px;
+      padding: 10px 24px;
+      border: 1px solid #ffffff;
+      background: transparent;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .read-more-btn:hover {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    /* Bottom Thumbnail Selector */
+    .selector-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .thumb-card {
+      width: 60px;
+      height: 60px;
+      background: #222222;
+      border: 2px solid transparent;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .thumb-card:hover {
+      opacity: 0.8;
+    }
+
+    .thumb-card.active {
+      border-color: #d15bb8;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="showcase-container">
+    <h1 class="main-title">Nathan Taylor's JS Game Projects & 3D Showcase</h1>
+
+    <div class="featured-card">
+      <div class="display-container" id="mediaBox">
+        <canvas id="myCanvas"></canvas>
+        <model-viewer id="myModelViewer" style="display: none;" auto-rotate camera-controls></model-viewer>
+      </div>
+
+      <div class="info-container">
+        <h2 id="projectTitle">Project Title</h2>
+        <p id="projectDescription">Project description details go here.</p>
+        
+        <div class="meta-item">Date: <span id="projectDate">MM/DD/YYYY</span></div>
+        <div class="meta-item">Author: <span id="projectAuthor">Author Name</span></div>
+        <div class="meta-item">Type/Languages: <span id="projectLang">JavaScript</span></div>
+
+      </div>
+    </div>
+
+    <div class="selector-row" id="cardContainer"></div>
+  </div>
+
+  <script>
+    var currentProcessingInstance = null;
+
+    // Mix of JS Code projects and 3D Model items
+    var projects = [
+      {
+        id: 0,
+		type: "JS",
+        title: "Tiles - Puzzle Game",
+        description: "HOW TO PLAY:\nGoal: Match the tiles with the background color\nClick/Tap a tile to transform the surrounding tiles to match its color",
+        date: "6/21/2022",
+        author: "Nathan Taylor",
+        languages: "JavaScript",
+        link: "#",
+		width: 400,
+        height: 400,
+        code: function(p) {
+          with (p) {
+            size(400, 400); frameRate(30);
+			/************************************************************************
+			**                ______    __    __      ____    ____                 **
+			**               |_    _|  |  |  |  |    |   _|  |    |                **
+			**                 |  |    |  |  |  |    |  |_   |  |_|                **
+			**                 |  |    |  |  |  |    |   _|   \  \                 **
+			**                 |  |    |  |  |  |_   |  |_    _|  |                **
+			**                 |__|    |__|  |____|  |____|  |____|                **
+			**                                                                     **
+			*************************************************************************
+				HOW TO PLAY:
+				Goal: Match the tiles with the background color
+				Click/Tap a tile to transform the surrounding tiles to match its color
+			*/
+			//===== LEVELS =====//
+			//One Plus (2 Color, RG)
+			//Fill it (2 Color, RG)
+			//Two Plus (2 Color, RG)
+			//Sandwich (2 Color, RG)
+			//Green Box (2 Color, RG)
+			//Three Stripes (3 Color, RGB)
+			//Two Corners (3 Color, RGB)
+			//X Marks the Spot (3 Color, RGB)
+			//Pinwheel (4 Color, RGBY)
+			//4 Square (4 Color, RGBY)
+			//Super Pinwheel (4 Color, RGBY)
+			//Randomness (5 Color, RGBYM)
+			//Tile Title (3 Color, RGB)
+			var lvlTitles = ["One Plus", "Fill It", "Two Plus", "Sandwich", "Green Box", "Three Stripes", "Two Corners", "X Marks the Spot", "Pinwheel", "Four Square", "Super Pinwheel", "Randomness", "Tile Title"];
+			var tiles = [];
+			var curLvl = 0;
+			var colors = [color(155, 0, 0), color(0, 155, 0), color(0, 0, 155), color(150, 150, 0), color(150, 0, 150)];
+			var gameState = "Menu"; //Menu, Tutorial, LevelWin, GameWin
+			var tilesText = function(Text, x, y, size, c) {
+				textAlign(CENTER, CENTER);
+				textFont(createFont("Impact"), size);
+				fill(c);
+				for (var i = 0; i < 4; i++) {
+					text(Text, x+i, y+i);
+					text(Text, x-i, y+i);
+					text(Text, x+i, y-i);
+					text(Text, x-i, y-i);
+				}
+				fill(0, 0, 0, 105);
+				text(Text, x, y);
+
+			};
+			var Background = function(x, y, c) {
+				this.x = x;
+				this.y = y;
+				this.c = c;
+			};
+			Background.prototype.draw = function() {
+				rectMode(CENTER);
+				noStroke();
+				fill(this.c);
+				rect(this.x, this.y, 50, 50);
+				fill(0, 0, 0, 70);
+				rect(this.x, this.y, 50, 50);
+			};
+			var Tile = function(x, y, c, u, d, l, r, id) {
+				this.x = x;
+				this.y = y;
+				this.c = c;
+				this.u = u;
+				this.d = d;
+				this.l = l;
+				this.r = r;
+				this.id = id;
+				this.popAmt = random(0.1, 0.4);
+				this.popGrav = random(-7, -5);
+				this.popX = random(-3, 3);
+				this.popDelay = random(5, 20);
+				this.popTimer = 0;
+			};
+			Tile.prototype.draw = function() {
+				rectMode(CENTER);
+				fill(this.c);
+				strokeWeight(3);
+				var newColor = this.c + color(50, 50, 50);
+				stroke(newColor);
+				rect(this.x, this.y, 40, 40, 15);
+				//fill(255);
+				//text(this.id, this.x, this.y);
+			};
+			Tile.prototype.popOff = function() {
+				if (this.popTimer >= this.popDelay) {
+					this.y+=this.popGrav;
+					this.popGrav+=this.popAmt;
+					//println(this.popAmt);
+					if (this.x < 200) {
+						this.x+=this.popX;
+					}
+				}
+				else {
+					this.popTimer++;
+				}
+			};
+			Tile.prototype.checkClick = function() {
+				if (mouseX > this.x-20 && mouseX < this.x+20 && mouseY > this.y-20 && mouseY < this.y+20)
+				{
+					//set surrounding tiles when clicked
+					tiles[this.u].c = this.c;
+					tiles[this.d].c = this.c;
+					tiles[this.l].c = this.c;
+					tiles[this.r].c = this.c;
+				}
+			};
+			Tile.prototype.getColor = function() {
+				return this.c;
+			};
+			Tile.prototype.compareColors = function(color) {
+				return this.c===color;
+			};
+			var Button = function(config) {
+				this.txt = config.txt;
+				this.x = config.x;
+				this.y = config.y;
+				this.w = config.w;
+				this.h = config.h;
+				this.c = config.c;
+				this.sc = config.sc;
+				this.onClick = config.onClick || function() {println("No Click Event");};
+			};
+			Button.prototype.hover = function() {
+				return (mouseX > this.x-(this.w/2) &&
+						mouseX < this.x+(this.w/2) &&
+						mouseY > this.y-(this.h/2) &&
+						mouseY < this.y+(this.h/2));
+			};
+			Button.prototype.draw = function() {
+				rectMode(CENTER);
+				strokeWeight(4);
+				stroke(this.sc);
+				fill(this.c);
+				if (this.hover()) {
+					rect(this.x, this.y, this.w*1.25, this.h*1.25);
+					tilesText(this.txt, this.x, this.y, this.h, this.sc);
+				}
+				else {
+					rect(this.x, this.y, this.w, this.h);
+					tilesText(this.txt, this.x, this.y, this.h-24, this.sc);
+				}
+			};
+			Button.prototype.handleClick = function() {
+				if (this.hover()) {
+					this.onClick();
+				}
+			};
+			var saveLvl = [];
+			var levels = [
+			//Tutorial (One Plus)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0]
+			], 
+			//Tutorial (Fill it)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0]
+			], 
+			//(Two Plus)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0]
+			], 
+			//(Sandwich)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[1],colors[0],colors[1],colors[1],colors[1],colors[0],colors[1],colors[0],colors[1],colors[1],colors[1],colors[0],colors[1],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0]
+			], 
+			//(Green Box)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1]
+			],
+			//(Three Stripes)
+			[colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[2],colors[1],colors[0],colors[1],colors[0],colors[1],colors[0],colors[1],colors[0],colors[0],colors[1],colors[0],colors[1],colors[0],colors[1],colors[0],colors[1]
+			], 
+			//(Two Corners)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0]
+			],
+			//(X Marks The Spot)
+			[colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1]
+			], 
+			//Pinwheel
+			[-16737536,-16737536,-16737536,-16737536,-16777061,-16777061,-16777061,-16777061,-16737536,-16737536,-16737536,-16737536,-16777061,-16777061,-16777061,-16777061,-16737536,-16737536,-16737536,-16737536,-16777061,-16777061,-16777061,-16777061,-16737536,-16737536,-16737536,-16737536,-16777061,-16777061,-16777061,-16777061,-6908416,-6908416,-6908416,-6908416,-6619136,-6619136,-6619136,-6619136,-6908416,-6908416,-6908416,-6908416,-6619136,-6619136,-6619136,-6619136,-6908416,-6908416,-6908416,-6908416,-6619136,-6619136,-6619136,-6619136,-6908416,-6908416,-6908416,-6908416,-6619136,-6619136,-6619136,-6619136
+			],
+			//4 Square
+			//Super Pinwheel
+			[-6619136,-6908416,-6908416,-6908416,-6908416,-6908416,-6908416,-6908416,-6619136,-6619136,-6908416,-6908416,-6908416,-6908416,-6908416,-16737536,-6619136,-6619136,-6619136,-6908416,-6908416,-6908416,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6908416,-16737536,-16737536,-16737536,-6619136,-6619136,-6619136,-16777061,-16737536,-16737536,-16737536,-16737536,-6619136,-6619136,-16777061,-16777061,-16777061,-16737536,-16737536,-16737536,-6619136,-16777061,-16777061,-16777061,-16777061,-16777061,-16737536,-16737536,-16777061,-16777061,-16777061,-16777061,-16777061,-16777061,-16777061,-16737536
+			],
+			//(Randomness)
+			[-16777061,colors[1],colors[1],colors[0],colors[1],colors[1],-16777061,-16777061,-16777061,-16777061,colors[0],-6908416,colors[0],colors[0],colors[0],colors[0],-16777061,colors[0],-6908416,-6908416,-6908416,colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],-6908416,colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],-6946666,colors[0],colors[0],colors[0],-6946666,colors[0],colors[0],-6946666,-6946666,-6946666,colors[0],-6946666,-6946666,-6946666,colors[0],colors[0],-6946666,colors[0],colors[0],colors[0],-6946666,colors[0],colors[0],colors[0],colors[0],colors[0]
+			],
+			//lvl FINAL TILE LETTERS
+			[-6946666,-6946666,-6946666,-6946666,-6946666,-16777061,-16777061,-16777061,-6946666,-6946666,-6946666,-6946666,-6946666,-16777061,-16777061,-16777061,-6946666,-6946666,-6946666,-6946666,-6946666,-16737536,-16737536,-16737536,-6946666,-6946666,-6946666,-6946666,-6946666,-16737536,-16737536,-16737536,-6946666,-6946666,-6946666,-6946666,-6946666,-16737536,-16737536,-16737536,-6946666,-6946666,-6946666,-6946666,-6946666,-6619136,-6619136,-6619136,-6946666,-6946666,-6946666,-6946666,-6946666,-6619136,-6619136,-6619136,-6946666,-6946666,-6946666,-6946666,-6946666,-6619136,-6619136,-6619136
+			]
+			];
+			var solutions = [
+			//One Plus (2 Color, RG)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0]
+			], 
+			//Fill it (2 Color, RG)
+			[colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1]
+			], 
+			//Two Plus (2 Color, RG)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0]
+			],
+			//Sandwich (2 Color, RG)
+			[-6619136,-6619136,-6619136,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6619136,-6619136,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6619136,-6619136,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6619136,-6619136,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6619136,-6619136,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6619136,-6619136,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6619136,-6619136,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6619136,-6619136,-16737536,-16737536,-6619136,-6619136,-6619136
+			],
+			//Green Box (2 Color, RG)
+			[colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0]
+			],
+			//Three Stripes (3 Color, RGB)
+			[colors[0],colors[0],colors[0],colors[2],colors[2],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[2],colors[2],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[2],colors[2],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[2],colors[2],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[2],colors[2],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[2],colors[2],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[2],colors[2],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[2],colors[2],colors[1],colors[1],colors[1]
+			], 
+			//Two Corners (3 Color, RGB)
+			[colors[0],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[0]
+			], 
+			//X Marks the Spot (3 Color, RGB)
+			[colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[2],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[2],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[2],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[2],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[2],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1]
+			],
+			//Pinwheel (4 Color, RGBY)
+			[-6619136,-6908416,-6908416,-6908416,-6908416,-6908416,-6908416,-6908416,-6619136,-6619136,-6908416,-6908416,-6908416,-6908416,-6908416,-16737536,-6619136,-6619136,-6619136,-6908416,-6908416,-6908416,-16737536,-16737536,-6619136,-6619136,-6619136,-6619136,-6908416,-16737536,-16737536,-16737536,-6619136,-6619136,-6619136,-16777061,-16737536,-16737536,-16737536,-16737536,-6619136,-6619136,-16777061,-16777061,-16777061,-16737536,-16737536,-16737536,-6619136,-16777061,-16777061,-16777061,-16777061,-16777061,-16737536,-16737536,-16777061,-16777061,-16777061,-16777061,-16777061,-16777061,-16777061,-16737536
+			],
+			//4 Square (4 Color, RGBY)
+			//Super Pinwheel (4 Color, RGBY)
+			[-6619136,-6908416,-6908416,-6619136,-6619136,-6619136,-6908416,-6908416,-6619136,-6619136,-6908416,-6908416,-6619136,-6908416,-6908416,-16737536,-16777061,-6619136,-6619136,-6908416,-6908416,-6908416,-16737536,-16737536,-16777061,-16777061,-6619136,-6619136,-6908416,-16737536,-16737536,-6908416,-16777061,-6619136,-6619136,-16777061,-16737536,-16737536,-6908416,-6908416,-6619136,-6619136,-16777061,-16777061,-16777061,-16737536,-16737536,-6908416,-6619136,-16777061,-16777061,-16737536,-16777061,-16777061,-16737536,-16737536,-16777061,-16777061,-16737536,-16737536,-16737536,-16777061,-16777061,-16737536
+			],
+			//Randomness (5 Color, RGBYM)
+			[colors[1],colors[1],colors[1],colors[0],colors[1],colors[1],colors[2],colors[2],colors[2],colors[3],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[3],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[4],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0]
+			],
+			//Tile Title (3 Color, RGB)
+			[colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[1],colors[0],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[2],colors[2],colors[2],colors[2],colors[2],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[0],colors[2],colors[0],colors[0],colors[0],colors[1],colors[1],colors[1],colors[1],colors[1],colors[0],colors[0],colors[0],colors[1],colors[0],colors[1],colors[0],colors[1],colors[0],colors[0],colors[0]
+			]
+
+			];
+			var score=0;
+			var backs = [];
+			var loadLevel = function(lvl) {
+				//Clear the background, saveLvl, and tiles arrays.
+				for (var i = 0; i !== backs.length; i = 0) {
+					backs.pop();
+					saveLvl.pop();
+					tiles.pop();
+				}
+				for (var i = 0; i < 8; i++) {
+					for (var j = 0; j < 8; j++) {
+						var bg = new Background(i*50+25, j*50+25, solutions[lvl][backs.length]);
+						//println(tiles[tileCount-1].l);
+						backs.push(bg);
+					}
+				}
+				
+				for (var i = 0; i < 8; i++) {
+					for (var j = 0; j < 8; j++) {
+						var l = tiles.length;
+						var r = tiles.length;
+						var u = tiles.length;
+						var d = tiles.length;
+						var c = color(105, 0, 0);
+						if (j > 0 && j < 8) {
+							u = tiles.length-1;//set this tile's up to the one above it.
+							tiles[u].d = tiles.length;//set the previous one's down to this tile.
+						}
+						else {
+							u = tiles.length;
+						}
+						if (i > 0 && i < 8) {
+							l = tiles[tiles.length-8].id;
+							tiles[l].r = tiles.length;
+						}
+						else {
+							l = tiles.length;
+						}
+						c=levels[lvl][tiles.length];
+						var t = new Tile(i*50+25, j*50+25, c, u, d, l, r, tiles.length);
+						//println(tiles[tileCount-1].l);
+						tiles.push(t);
+					}
+				}
+				//print it all out
+				for (var i = 0; i < tiles.length; i++) {
+					var t = tiles[i];
+					//println(i + ": L:" + t.l + " | U:" + t.u + " | D:" + t.d + " | R:" + t.r);
+				}
+
+			};
+			keyPressed = function() {
+				if (keyCode === 82) {
+					loadLevel(curLvl);
+					gameState="Game";
+				}
+			};
+			loadLevel(curLvl);
+			var playBtn = new Button({txt: "PLAY", x: 200, y: 200, w: 250, h: 100, sc: color(0,255,0), c: color(0,155,0), onClick: function() {gameState="Game";loadLevel(curLvl);}});
+			var howBtn = new Button({txt: "HOW", x: 200, y: 325, w: 250, h: 100, sc: color(0,0,255), c: color(0,0,155), onClick: function() {println("See Description.");}});
+			var drawMenu = function() {
+				background(100, 0, 0);
+				tilesText("T I L E S", 200, 75, 112, color(255, 0, 0));
+				playBtn.draw();
+				howBtn.draw();
+			};
+			var drawLvlWin = function() {
+				rectMode(CENTER);
+				fill(255, 255, 255, 125);
+				rect(200, 200, 410, 410);
+				tilesText("LEVEL " + (curLvl+1) + "\nCOMPLETE!", 200, 75, 48, color(0, 255, 0));
+				if (curLvl < levels.length -1) {
+					tilesText("CLICK FOR \nNEXT LEVEL", 200, 300, 48, color(0, 255, 255));
+				}
+				else {
+					tilesText("YOU COMPLETED\nALL THE LEVELS!", 200, 300, 48, color(0, 255, 255));
+				}
+			};
+			var tilePop = 0;
+			draw= function() {
+				if (gameState==="Game" || gameState==="LvlWin" || gameState==="GameWin") {
+					background(75, 0, 0);
+					//noStroke();
+					//rectMode(CORNER);
+					//fill(0, 75, 0);
+					//rect(200, 0, 200, 200);
+					//fill(0, 0, 75);
+					//rect(0, 200, 200, 200);
+					for (var i = 0; i < backs.length; i++) {
+						backs[i].draw();
+					}
+					for (var i = 0; i < tiles.length; i++) {
+						tiles[i].draw();
+					}
+					if (gameState==="LvlWin") {
+						drawLvlWin();
+						for (var i = 0; i < tiles.length; i++) {
+							tiles[i].popOff();
+						}
+					}
+					if (gameState==="GameWin") {
+						drawLvlWin();
+						for (var i = 0; i < tiles.length; i++) {
+							tiles[i].popOff();
+						}
+					}
+				}
+				else if (gameState==="Menu") {
+					drawMenu();
+				}
+			};
+			mouseReleased = function() {
+				if (gameState==="Menu") {
+					//println("Menu State Click");
+					//gameState="Game";
+					playBtn.handleClick();
+					howBtn.handleClick();
+				}
+				else if (gameState==="LvlWin") {
+					//println("LvlWin State Click");
+					curLvl++;
+					loadLevel(curLvl);
+					gameState="Game";
+				}
+				else if (gameState==="GameWin") {
+					gameState="Menu";
+					curLvl = 0;
+				}
+				else if (gameState==="Game") {
+					//println("Game State Click");
+				if (mouseButton === LEFT) {
+					for (var i = 0; i < tiles.length; i++) {
+						tiles[i].checkClick();
+					}
+					//see if you won
+					for (var i =0; i < tiles.length; i++) {
+						if (tiles[i].compareColors(solutions[curLvl][i])) {
+							score++;
+						}
+					}
+					if (score >=64) {
+						//println("YOU WON!");
+						if (curLvl < levels.length - 1) {
+							gameState="LvlWin";
+						}
+						else {
+							gameState="GameWin";
+						}
+					}
+					score = 0;
+				}
+				else if (mouseButton===RIGHT) {
+					for (var i = 0; i < tiles.length; i++) {
+						//println(tiles[i].getColor());
+						saveLvl.push(tiles[i].getColor());
+					}
+					println("Right click? lvl:" + saveLvl.length);
+					println(saveLvl);
+					/*for (var i = 0; i < level.length; i++) {
+						print(level[i] + ", ");
+					}*/
+				}
+				}
+			};
+
+          }
+        }
+      },
+      {
+        id: 1,
+		type: "JS",
+        title: "Slider - Puzzle Game",
+        description: "Use the arrow keys to align the 9 center tiles to match the small board. Click the small board for a new pattern.",
+        date: "8/12/2019",
+        author: "Nathan Taylor",
+        languages: "JavaScript",
+        link: "#",
+		width: 500,
+        height: 500,
+        code: function(p) {
+          with (p) {
+            size(500, 500); frameRate(30);
+            /**
+    
+				HOW:
+				USE THE ARROW KEYS TO ALIGN THE CENTER LARGE TILES TO MATCH THE SMALL BOARD
+									   _
+									_ |^| _
+								   |<||v||>|
+					
+				Click the small board if you need a different pattern
+				
+				Real Tutorial Coming Soon
+				
+			*/
+
+
+
+
+			/* Here's the code, not cleaned up at all... */
+			var gameWidth = width/(4/2.5);
+			var gameHeight = height/(4/2.5);
+			var gameState = "main";
+			var moveCounter = 0;
+			var tempCount = 0;
+			{
+			var colors = [color(0, 0, 0, 0), color(200, 35, 35), color(200, 200, 35), 
+						  color(35, 200, 35), color(200, 35, 200), color(35, 35, 200),
+						  color(35, 200, 200)];
+			var r = [round(random(1, 6)), round(random(1, 6)), round(random(1, 6)),
+					 round(random(1, 6)), round(random(1, 6)), round(random(1, 6)),
+					 round(random(1, 6)), round(random(1, 6)), round(random(1, 6))];
+			var boardColors = [1, 1, 1, 1, 0,
+							   4, 4, 4, 4, 2,
+							   5, 5, 5, 5, 2,
+							   3, 3, 3, 3, 2,
+							   6, 6, 6, 6, 2];
+			var defaultBoard = [1, 1, 1, 1, 0, 4, 4, 4, 4, 2, 5, 5, 5, 5, 2, 3, 3, 3, 3, 2, 6, 6, 6, 6, 2];
+			}// Color arrays
+			var checkSolved = function() {
+				var score = 0;
+				for (var i = 6; i <= 8; i++) {
+					if (boardColors[i] === r[i-6]) {
+						score++;
+					}
+				}
+				//println("score1:" + score);
+				for (var i = 11; i <= 13; i++) {
+					if (boardColors[i] === r[i-8]) {
+						score++;
+					}
+				}
+				//println("score2:" + score);
+				for (var i = 16; i <= 18; i++) {
+					if (boardColors[i] === r[i-10]) {
+						score++;
+					}
+				}
+				//println("score3:" + score);
+				if (score >= 9) {
+					gameState = "win";
+				}
+			};
+			{
+			var shiftRight = function(pieces) {
+				//store the array
+				var tempArr = boardColors;
+				var spot = 0;
+				//find the open spot
+				for (var i = 0; tempArr[i] !== 0; i++) {
+					spot++;
+				}
+				//move the pieces
+				if (round(spot/5) !== spot/5) {
+					boardColors[spot] = tempArr[spot-1];
+					//place the 0 in the correct spot
+					boardColors[spot-1] = 0;
+					moveCounter++;
+				}
+				else
+				{
+					boardColors[spot] = 0;
+				}
+			};
+			var shiftLeft = function(pieces) {
+				//store the array
+				var tempArr = boardColors;
+				var spot = 0;
+				for (var i = 0; tempArr[i] !== 0; i++) {
+					spot++;
+				}
+				//move the pieces
+				if (round((spot+1)/5) !== (spot+1)/5) {
+					boardColors[spot] = tempArr[spot+1];
+					//place the 0 in the correct spot
+					boardColors[spot+1] = 0;
+					moveCounter++;
+				}
+				else
+				{
+					boardColors[spot] = 0;
+				}
+			};
+			var shiftDown = function(pieces) {
+				//store the array
+				var tempArr = boardColors;
+				var spot = 0;
+				for (var i = 0; tempArr[i] !== 0; i++) {
+					spot++;
+				}
+				//move the pieces
+				if (spot > 4) {
+					boardColors[spot] = tempArr[spot-5];
+					//place the 0 in the correct spot
+					boardColors[spot-5] = 0;
+					moveCounter++;
+				}
+				else
+				{
+					boardColors[spot] = 0;
+				}
+			};
+			var shiftUp = function(pieces) {
+				//store the array
+				var tempArr = boardColors;
+				var spot = 0;
+				for (var i = 0; tempArr[i] !== 0; i++) {
+					spot++;
+				}
+				//move the pieces
+				if (spot < 20) {
+					boardColors[spot] = tempArr[spot+5];
+					//place the 0 in the correct spot
+					boardColors[spot+5] = 0;
+					moveCounter++;
+				}
+				else
+				{
+					boardColors[spot] = 0;
+				}
+			};
+			}// Movement Options
+
+			{
+			var boardTile = function(x, y, color) {
+				strokeWeight(3);
+				fill(color);
+				rect(x, y, gameWidth/5-10, gameHeight/5-10, 3);
+				strokeWeight(1);
+			};
+			var moveTile = function(x, y, color, selected) {
+				strokeWeight(3);
+				if (selected===true) {
+					strokeWeight(4);stroke(255);
+				}
+				fill(color);
+				rect(x, y, gameWidth/5-10, gameHeight/5-10, 3);
+				fill(0, 0, 0, 25);
+				noStroke();
+				rect(x, y+(gameHeight/5-10)/2, gameWidth/5-10, (gameHeight/5-10)/2, 0, 0, 4, 4);
+				strokeWeight(1);
+			};
+			var logoTile = function(x, y, s, color, selected) {
+				strokeWeight(3);
+				if (selected===true) {
+					strokeWeight(4);stroke(255);
+				}
+				fill(color);
+				rect(x, y, s, s, 3);
+				fill(0, 0, 0, 25);
+				noStroke();
+				rect(x, y+(s)/2, s, (s)/2, 0, 0, 4, 4);
+				strokeWeight(1);
+			};
+
+			var dice = function(x, y, color) {
+				stroke(200);
+				strokeWeight(2);
+				fill(color);
+				rect(x, y, gameWidth/9-5, gameHeight/9-5, 2);
+				strokeWeight(1);
+			};
+
+			var board = function(x, y, wide, high, type) {
+				fill(0);
+				rect(x, y, wide, high, 5);
+				var spot = 0;
+				for (var j = y+15; j < y+high-20; j+=gameWidth/5) {
+					for (var i = x+15; i < x+wide-20; i += gameWidth/5) {
+						stroke(100);
+						var t = 225;
+						if (i > x+15 && j > y+15 && i < x+wide-75 && j < y+high-75) {
+							stroke(190);
+							t=255;
+						}
+						boardTile(i, j, color(40, 40, 40, t));
+						moveTile(i, j, colors[boardColors[spot]]);
+						spot++;
+					}
+				}
+			};
+			var shaker = function(x, y, wide, high, type) {
+				fill(0);
+				stroke(200);
+				rect(x, y, wide, high, 5);
+				var spot = 0;
+				var spots = [];
+				boardColors = defaultBoard;
+				//randomize the goal
+				mouseClicked = function() {
+					if (mouseX > x && mouseY > y && mouseX < x+wide && mouseY < y+high) {
+
+					r = [round(random(1, 6)), round(random(1, 6)), round(random(1, 6)),
+						 round(random(1, 6)), round(random(1, 6)), round(random(1, 6)),
+						 round(random(1, 6)), round(random(1, 6)), round(random(1, 6))];
+					}
+				};
+
+				for (var j = y+15; j < y+high-20; j+=gameWidth/9) {
+					for (var i = x+15; i < x+wide-20; i += gameWidth/9) {
+						dice(i, j, colors[r[spot]]);
+						spot++;
+					}
+				}
+			};
+			}// Tiles and board
+			var newGame = function() {
+					background(90);
+					//moveCounter = 0;
+					board(gameWidth/4, gameHeight/2, gameWidth+20, gameHeight+20);
+					shaker(gameWidth/4, gameHeight/20, gameWidth-182, gameHeight-182);
+			};
+			var alignCenter = true;
+
+			var blockFont = function(txt, x, y, size, spacing, color, sColor) {
+				fill(color);
+				stroke(sColor);
+				strokeWeight(size*0.05);
+				var leftSpot = x;
+				if (alignCenter === true) { 
+					x-=(txt.length/2)*(size+spacing);
+					y-=size/2;
+				}
+				for(var i = 0; i < txt.length; i++) {
+					var letter = txt[i];
+					fill(color);
+					stroke(sColor);
+					if (letter !== "\n" && letter !== " ") {
+						rect(x, y, size, size, size*0.05);
+					}
+					fill(0);
+					if (letter === "a" || letter ==="A") {
+						line(x+size/2, y+size/2, x+size/2, y+size-2);
+						triangle(x+size/2, y+size/4, x+size/2.30, y+size/3.5, x+size/1.75, y+size/3.5);
+					}
+					else if (letter === "b" || letter ==="B") {
+						line(x+size/2, y+size/2, x+size-2, y+size/2);
+						quad(x+size/2, y+size/4, x+size/2.3, y+size/3.5, x+size/2, y+size/3.2, x+size/1.75, y+size/3.5);
+						quad(x+size/2, y+3*size/4, x+size/2.3, y+size-size/3.5, x+size/2, y+size-size/3.2, x+size/1.75, y+size-size/3.5);
+					}
+					else if (letter === "c" || letter === "C") {
+						line(x+size/2, y+size/2, x+size-2, y+size/2);
+					}
+					else if (letter === "d" || letter === "D") {
+						quad(x+size/2, y+size/2.5, x+size/2+size/18, y+size/2, x+size/2, y+size-size/2.5, x+size/2-size/18, y+size/2);
+						triangle(x+size/1.3, y+1, x+size-2, y+1, x+size-2, y+size/4);
+						triangle(x+size/1.3, y+size-1, x+size-2, y+size-1, x+size-2, y+size-size/4);
+					}
+					else if (letter === "e" || letter === "E") {
+						triangle(x+size/2, y+size/3, x+size-2, y+size/3.5, x+size-2, y+size/2.5);
+						triangle(x+size/2, y+size-size/3, x+size-2, y+size-size/3.5, x+size-2, y+size-size/2.5);
+					}
+					else if (letter === "f" || letter === "F") {
+						line(x+size/2, y+size/4, x+size-2, y+size/4);
+						rect(x+size/2, y+size/2, size/2-2, size/2-2);
+					}
+					else if (letter === "g" || letter === "G") {
+						rect(x+size/2.5, y+size/3, size/1.7, size/8);
+						rect(x+size/2.5, y+size/3, size/8, size/4);
+						rect(x+size/2.5, y+size/3+size/4, size/5, size/8);
+					}
+					else if (letter === "h" || letter === "H") {
+						line(x+size/2, y+2, x+size/2, y+size/3);
+						line(x+size/2, y+size-2, x+size/2, y+size-size/3);
+					}
+					else if (letter === "i" || letter === "I") {
+						rect(x+2, y+size/2.75, size/4, size/3);
+						rect(x+size-size/4-2, y+size/2.75, size/4, size/3);
+					}
+					else if (letter === "j" || letter === "J") {
+						line(x+size/2, y+size/2, x+2, y+size/2);
+						line(x+size/2+1, y+size/2+2, x+size/2+1, y+size/1.5);
+					}
+					else if (letter === "k" || letter === "K") {
+						line(x+size/2, y+2, x+size/2, y+size/3);
+						line(x+size/2, y+size-2, x+size/2, y+size-size/3);
+						triangle(x+size-size/4, y+size/2, x+size-2, y+size/2.5, x+size-2, y+size-size/2.5);
+					}
+					else if (letter === "l" || letter === "L") {
+						rect(x+size/2, y+2, size/2-2, size/2-2);
+					}
+					else if (letter === "m" || letter === "M") {
+						line(x+size/2, y+2, x+size/2, y+size/3);
+						triangle(x+size/4, y+size-size/3, x+size/4+size/16, y+size-2, x+size/4-size/16, y+size-2);
+						triangle(x+size-size/4, y+size-size/3, x+size-size/4+size/16, y+size-2, x+size-size/4-size/16, y+size-2);
+					}
+					else if (letter === "n" || letter === "N") {
+						line(x+size/2, y+2, x+3*size/4, y+size/2);
+						line(x+size/2, y+size-2, x+size/4, y+size/2);
+					}
+					else if (letter === "o" || letter === "O") {
+						quad(x+size/2, y+size/2.5, x+size/2+size/18, y+size/2, x+size/2, y+size-size/2.5, x+size/2-size/18, y+size/2);
+					}
+					else if (letter === "p" || letter === "P") {
+						quad(x+size/2, y+size/4, x+size/2.3, y+size/3.5, x+size/2, y+size/3.2, x+size/1.75, y+size/3.5);
+						rect(x+size/2, y+size/2, size/2-2, size/2-2);
+					}
+					else if (letter === "q" || letter === "Q") {
+						quad(x+size/2, y+size/2.5, x+size/2+size/18, y+size/2, x+size/2, y+size-size/2.5, x+size/2-size/18, y+size/2);
+						triangle(x+size-size/1.3, y+1, x+2, y+1, x+2, y+size/4);
+						triangle(x+size/1.3, y+1, x+size-2, y+1, x+size-2, y+size/4);
+						triangle(x+size-size/1.3, y+size-1, x+2, y+size-1, x+2, y+size-size/4);
+						triangle(x+size-size/12, y+size-size/6, x+size-2, y+size-size/9, x+size-2, y+size/1.3);
+						triangle(x+size/1.3, y+size-1, x+size-size/9, y+size-1, x+size-size/6, y+size-size/12);
+					}
+					else if (letter === "r" || letter === "R") {
+						line(x+size/3, y+size/4, x+size-size/3, y+size/4);
+						triangle(x+size-2, y+size/3, x+size-2, y+size/2, x+size-size/4, y+size/2);
+						triangle(x+size/2, y+size/2, x+size-size/3, y+size-2, x+size/2, y+size-2);
+					}
+					else if (letter === "s" || letter === "S") {
+						line(x+size/2, y+size/4, x+size-2, y+size/2);
+						line(x+2, y+size/2, x+size/2, y+size-size/4);
+					}
+					else if (letter === "t" || letter === "T") {
+						rect(x+2, y+size/2, size/4, size/2);
+						rect(x+size-size/4-2, y+size/2, size/4, size/2);
+					}
+					else if (letter === "u" || letter === "U") {
+						line(x+size/2, y+2, x+size/2, y+size/2);
+					}
+					else if (letter === "v" || letter === "V") {
+						line(x+size/2, y+2, x+size/2, y+size/2);
+						triangle(x+size-size/1.3, y+size-1, x+2, y+size-1, x+2, y+size-size/2);
+						triangle(x+size/1.3, y+size-1, x+size-2, y+size-1, x+size-2, y+size-size/2);
+					}
+					else if (letter === "w" || letter === "W") {
+						triangle(x+size/4, y+size/3, x+size/4+size/16, y+2, x+size/4-size/16, y+2);
+						triangle(x+size-size/4, y+size/3, x+size-size/4+size/16, y+2, x+size-size/4-size/16, y+2);
+						triangle(x+size-size/1.3, y+size-1, x+2, y+size-1, x+2, y+size-size/4);
+						triangle(x+size/2, y+size-size/3, x+size/2+size/16, y+size-2, x+size/2-size/16, y+size-2);
+						triangle(x+size/1.3, y+size-1, x+size-2, y+size-1, x+size-2, y+size-size/4);
+					}
+					else if (letter === "x" || letter === "X") {
+						triangle(x+size/2, y+size-size/4, x+size/2+size/8, y+size-2, x+size/2-size/8, y+size-2);
+						triangle(x+size/2, y+size/4, x+size/2+size/8, y+2, x+size/2-size/8, y+2);
+						triangle(x+2, y+size/2-size/8, x+size/4, y+size/2, x+2, y+size/2+size/8);
+						triangle(x+size-2, y+size/2-size/8, x+size-size/4, y+size/2, x+size-2, y+size/2+size/8);
+					}
+					else if (letter === "y" || letter === "Y") {
+						triangle(x+size/2, y+size/4, x+size/2+size/8, y+2, x+size/2-size/8, y+2);
+						quad(x+2, y+2, x+size/2-size/6, y+size/2, x+size/2-size/6, y+size-2, x+2, y+size-2);
+						quad(x+size-2, y+2, x+size/2+size/6, y+size/2, x+size/2+size/6, y+size-2, x+size-2, y+size-2);
+					}
+					else if (letter === "z" || letter === "Z") {
+						line(x+size/2, y+size/4, x+2, y+size/2);
+						line(x+size-2, y+size/2, x+size/2, y+size-size/4);
+					}
+					else if (letter === "0") {
+						line(x+size/2, y+size/4, x+size/2, y+size-size/4);
+					}
+					else if (letter === "1") {
+						quad(x+size/2, y+size/4, x+size/2, y+size/2+size/7, x+2, y+size/2+size/7, x+2, y+size/2.5);
+						rect(x+size-size/4, y+2, size/4-2, size/2+size/7, 0, 2, 0, 0);
+						
+					}
+					else if (letter === "2") {
+						line(x+size/2, y+size/4, x+2, y+size/2);
+						line(x+size-2, y+size/2, x+size/2, y+size-size/4);
+					}
+					else if (letter === "3") {
+						triangle(x+size/2, y+size/3, x+2, y+size/3.5, x+2, y+size/2.5);
+						triangle(x+size/2, y+size-size/3, x+2, y+size-size/3.5, x+2, y+size-size/2.5);
+					}
+					else if (letter === "4") {
+						rect(x+size-size/4, y+2, size/4-2, size/2, 0, 2, 0, 0);
+						rect(x+size/2-size/4, y+2, size/4-2, size/2, 0, 2, 0, 0);
+						rect(x+2, y+size-size/4, size/2-2, size/4-2, 0, 0, 0, 2);
+						rect(x+size-size/4, y+size-size/4, size/4-2, size/4-2, 0, 0, 2, 0);
+					}
+					else if (letter === "5") {
+						line(x+size/2, y+size/4, x+size-2, y+size/4);
+						triangle(x+size/2, y+size-size/3, x+2, y+size-size/3.5, x+2, y+size-size/2.5);
+					}
+					else if (letter === "6") {
+						line(x+size/2, y+size/2, x+size-2, y+size/2);
+						quad(x+size/2, y+3*size/4, x+size/2.3, y+size-size/3.5, x+size/2, y+size-size/3.2, x+size/1.75, y+size-size/3.5);
+					}
+					else if (letter === "7") {
+						triangle(x+2, y+size/2, x+size/2-2, y+size/2, x+2, y+size/2+size/4);
+						triangle(x+size/2, y+size-1, x+size-2, y+size-1, x+size-2, y+size/2);
+					}
+					else if (letter === "8") {
+						line(x+size/2+size/4, y+size/2, x+size-2, y+size/2);
+						line(x+size/2-size/4, y+size/2, x+2, y+size/2);
+						quad(x+size/2, y+size/4, x+size/2.3, y+size/3.5, x+size/2, y+size/3.2, x+size/1.75, y+size/3.5);
+						quad(x+size/2, y+3*size/4, x+size/2.3, y+size-size/3.5, x+size/2, y+size-size/3.2, x+size/1.75, y+size-size/3.5);
+					}
+					else if (letter === "9") {
+						quad(x+size/2, y+size/4, x+size/2.3, y+size/3.5, x+size/2, y+size/3.2, x+size/1.75, y+size/3.5);
+						rect(x+2, y+size/2, size/2-2, size/2-2);
+					}
+					if (letter === "\n") {
+						x = leftSpot;
+						y += size+spacing+size*0.1;
+					}
+					else {
+					x += size+spacing;
+					}
+				}
+			};
+			var button = function(x, y, w, h, tS, color, txt, state, reset) {
+				//button color
+				noStroke();
+				fill(colors[color]);
+				rect(x-(w/2), y-(h/2), w, h);
+				fill(0, 0, 0, 25);
+				rect(x-(w/2), y, w, h/2);
+				//Text
+				blockFont(txt, x, y, tS, 2, colors[color], colors[0]);
+				if (mouseX > x-(w/2) && mouseX < x+(w/2) && mouseY > y-h/2 && mouseY < y+h/2) {
+					fill(255, 255, 255, 50);
+					mouseClicked = function() {
+						//update gamestate
+				if (mouseX > x-(w/2) && mouseX < x+(w/2) && mouseY > y-h/2 && mouseY < y+h/2) {
+						gameState = state;
+						if (reset === true) {
+						r = [round(random(1, 6)), round(random(1, 6)), round(random(1, 6)),
+						 round(random(1, 6)), round(random(1, 6)), round(random(1, 6)),
+						 round(random(1, 6)), round(random(1, 6)), round(random(1, 6))];
+						 moveCounter = 0;
+						 shaker(gameWidth/4, gameHeight/20, gameWidth-182, gameHeight-182);
+						}
+			}
+					};
+				}
+				else {
+					fill(255, 255, 255, 0);
+				}
+				//hover
+				rect(x-(w/2), y-(h/2), w, h);
+				
+				//text(txt, x, y);
+				textAlign(LEFT, TOP);
+			};
+
+			var logo = function(x, y, s) {
+				for (var i = 1; i < 7; i++) {
+					stroke(0);
+					logoTile(x+((s+2)*i)-s, y, s, colors[i]);
+				}
+				stroke(0); strokeWeight(3);fill(0);
+				//S
+				line(x+3, y+(s/2), x+(s/2), y+s-(s/4));
+				line(x+s+3, y+(s/2), x+(s/2), y+(s/4));
+				//L
+				rect((x+(s+2)*1.5), y, s/2, s/2);
+				//I
+				rect((x+(s+2)*2), y+(s/3), s/3, s/3);
+				rect((x+(s+2)*2.7), y+(s/3), s/3, s/3);
+				//D
+				quad(x+(s+2)*3.5, y+(s/2)-10, (x+(s+2)*3.5)+5, y+(s/2), x+(s+2)*3.5, y+(s/2)+10, (x+(s+2)*3.5)-5, y+(s/2));
+				triangle(x+(s+2)*3.8, y+1, x+(s+2)*4, y+3, x+(s+2)*4, y+(s/3));
+				triangle(x+(s+2)*3.8, y+s-1, x+(s+2)*4, y+s-3, x+(s+2)*4, y+s-(s/3));
+				//E
+				triangle(x+(s+2)*4.5, y+s/4, x+(s+2)*5, y+s/5, x+(s+2)*5, y+s/2-s/5);
+				triangle(x+(s+2)*4.5, y+s-s/4, x+(s+2)*5, y+s-s/5, x+(s+2)*5, y+s/2+s/5);
+				//R
+				line(x+(s+2)*5.5-5, y+s/4, x+(s+2)*5.5+5, y+s/4);
+				triangle(x+(s+2)*5.75, y+s/2, x+(s+2)*6, y+s/2, x+(s+2)*6, y+s/4);
+				triangle(x+(s+2)*5.5, y+s/2, x+(s+2)*5.75, y+s, x+(s+2)*5.5, y+s);
+			};
+					var i = 1;
+					var x = 155; var y = 233;
+					var x2 = 93; var y2 = 31;
+			draw = function() {
+				if (gameState === "main") {
+					if (mouseX > 112 && mouseX < 388 && mouseY > 350 && mouseY < 449) {
+						cursor("not-allowed");
+					}
+					else {
+						cursor("default");
+					}
+					background(90);
+					button(250, 265, 350, 120, 60, 3, "Play", "game", true);
+					button(250, 400, 275, 100, 30, 1, "Tutorial", "main", false);
+					var triSize = 125;
+					noStroke();
+					fill(235, 235, 235);
+					//bottom left
+					triangle(0, width-triSize, triSize, height, 0, height); 
+					//bottom right
+					triangle(width, height-triSize, width-triSize, height, width, height);
+					rect(0, 0, width, height/3+10);
+					fill(215, 215, 215);
+					//bottom left
+					triangle(0, height-triSize+10, triSize-10, height, 0, height); 
+					//bottom right
+					triangle(width, height-triSize+10, width-triSize+10, height, width, height); 
+					rect(0, 0, width, height/3);
+					logo(17, 54, 75);
+				}
+				else if (gameState === "game") {
+					button(400, 25, 100, 50, 6, "Reset Board", "game", false);
+					newGame();
+					keyPressed = function() {
+						if (keyCode === LEFT) {
+							shiftLeft();
+						}
+						else if (keyCode === RIGHT) {
+							shiftRight();
+						}
+						else if (keyCode === UP) {
+							shiftUp();
+						}
+						else if (keyCode === DOWN) {
+							shiftDown();
+						}
+						checkSolved();
+					};
+				}
+				else if (gameState === "win") {
+					//newGame();
+					background(colors[3]);
+					textAlign(CENTER, CENTER);
+					textSize(112);
+					fill(0);
+					//text("You won!", 250, 100);
+					stroke(255, 0, 0);
+					blockFont("You won", 250, 100, 67, 2, colors[3], colors[0]);
+					blockFont(moveCounter + " moves", 250, 225, 50, 2, colors[3], colors[0]);
+					textSize(72);
+					//text("Moves: " + moveCounter, 250, 225);
+					button(250, 325, 300, 75, 47, 6, "Again", "game", true);
+					button(250, 425, 250, 60, 44, 6, "Menu", "main", false);
+				}
+				else if (gameState === "tutorial") {
+					background(90);
+					newGame();
+					fill(255, 255, 255, 210);
+					if (round(i/50) === i/50) {
+						if (round(i/150) === i/150) {
+							y+=62;
+							y2+=34;
+							x=155;
+							x2=93;
+						}
+						else {
+							x+= 62;
+							x2+=35;
+						}
+						if (i >= 450) {
+							i=0;
+							x= 155; y=233;
+							x2=93; y2=31;
+						}
+					}
+					rect(x, y, 55, 55, 5);
+					rect(x2, y2, 30, 30, 5);
+					noStroke();
+					moveTile(350, 20, colors[2], false);
+					moveTile(295, 75, colors[2], false);
+					moveTile(350, 75, colors[2], false);
+					moveTile(405, 75, colors[2], false);
+					stroke(0);
+					triangle(356, 55, 376, 35, 396, 55);
+					triangle(356, 92, 376, 112, 396, 92);
+					triangle(356-50, 102, 376-50, 117, 376-50, 87);
+					triangle(356+90, 102, 376+50, 117, 376+50, 87);
+					i++;
+				}
+			};
+          }
+        }
+      },
+	  {
+        id: 2,
+		type: "JS",
+        title: "Lane Dodger - Infinite Runner",
+        description: "Oh NO! You've taken a wrong turn and are now going against traffic! Dodge the oncoming traffic\nto gain points! Warning, there are no exits! Keep going until you run into something.\nGood Luck, and Have FUN!",
+        date: "4/3/2014",
+        author: "Nathan Taylor",
+        languages: "JavaScript, ProcessingJS",
+        link: "#",
+		width: 500,
+        height: 400,
+        code: function(p) {
+          with (p) {
+            size(500, 400); frameRate(60);
+			
+			var img_drv_1 = loadImage("drivergreen.png");
+			var img_drv_2 = loadImage("driverblue.png");
+			var img_drv_3 = loadImage("driverbaby.png");
+			var img_drv_4 = loadImage("driverorange.png");
+			var img_drv_5 = loadImage("driverred.png");
+			var img_drv_6 = loadImage("driverteal.png");
+
+			/** =-=-=-=-=-=-=-=-=-=-= Lane Dodger =-=-=-=-=-=-=-=-=-=-= **\
+
+			Oh NO! You've taken a wrong turn and are now going against traffic! Dodge the oncoming traffic
+			to gain points! Warning, there are no exits! Keep going until you run into something.
+
+			Good Luck, and Have FUN!
+
+			~bigNinja
+
+			*/
+			//This game is one that I started when I first became a programmer, but I never finished it. Graphics are the same as they would have been, but everything now works the way it should!
+
+			/** Code */
+			var state = "Menu";
+			var myY = [150,225,300];
+			var why = 1;
+			var bad1X = 500;
+			var bad2X = 600;
+			var coinX = 800;
+			var badY = [0,2,0,0,1,1,0,1,0,1,2,2,0,1,2,0,2,0,0,2,1,0,1];//0-22
+			var badRand1 = 0;
+			var badRand2 = 3;
+			var coinRand = 5;
+			var speed = 1.5;
+			var playerScore = 0;
+			var player = 0;
+			var txtSize = 13;
+			var txtSizeV = 0;
+			var textPlace = 430;
+			var textYPlace = 30;
+			var coinCount = 0;
+			var angledText = "Dont Crash!";
+			var myPlayer = function(x,y,d,character) {
+				pushMatrix();
+				translate(41,30);
+				scale(1,1);
+				var Player = [img_drv_1,img_drv_2,img_drv_3,img_drv_4,img_drv_5];
+				
+				//Wheels
+				fill(20, 20, 20);
+				ellipse(x+30, y+20, 30, 30);
+				ellipse(x-30, y+20, 30, 30);
+				fill(82, 82, 82);
+				ellipse(x+30, y+20, 30-18, 30-18);
+				ellipse(x-30, y+20, 30-18, 30-18);
+				
+				//Body
+				fill(0, 136, 255);
+				noStroke();
+				rect(x-40, y-31, 80, 50);
+				if (d===true) {
+					//Driver
+					if (character<=2) {
+						image(Player[character], x+13, y+-28, 27, 28);
+					} else {
+						image(Player[character], x+13, y-37, 27, 40);
+					}
+				}
+				rect(x-62, y-6, 122, 25); 
+				
+				//Windshield
+				fill(255,255,255,60);
+				rect(x+12, y+-31, 28, 25);
+				//add an avatar as a driver... maybe?
+				
+				popMatrix();
+			};
+			var badGuy = function(x,y,d) {
+				pushMatrix();
+				translate(62,30);
+				var topDriver = img_drv_6;
+				//Wheels
+				fill(0, 0, 0);
+				ellipse(x+30, y+20, 30, 30);
+				ellipse(x-30, y+20, 30, 30);
+				fill(82, 82, 82);
+				ellipse(x+30, y+20, 30-18, 30-18);
+				ellipse(x-30, y+20, 30-18, 30-18);
+				
+				//Body
+				fill(255, 0, 0);
+				noStroke();
+				rect(x-62, y-6, 122, 25); 
+				rect(x-40, y-31, 80, 50);
+				
+				//Windshield
+				fill(255, 76, 76);
+				rect(x+-40, y+-31, 28, 25);
+				
+				if (d===true) {
+				//Driver
+					image(topDriver, x+-39, y-34, 27, 27);
+				}
+				popMatrix();
+			};
+			var coins = function(x,y,w,h) {
+				fill(235,235,0);stroke(200,200,25);strokeWeight(3);
+				ellipse(x,y+25,50,50);
+				textSize(24);textAlign(CENTER,CENTER);
+				fill(0);
+				text("+1",x,y+25);
+				fill(200,200,25);
+				text("+1",x-1,y+24);
+				strokeWeight(1);noStroke();
+			};
+			keyPressed = function() {
+				if (state==="Play") {
+					if (keyCode===38&&why>0) {
+						why-=1;
+					}
+					if (keyCode===40&&why<2) {
+						why+=1;
+					}
+				}
+			};
+			mouseClicked = function() {
+				if (state==="Menu") {
+					if (mouseX>29&&mouseX<150&&mouseY>224&&mouseY<290) {
+						state = "Play";
+					}
+					if (mouseX>350&&mouseX<471) {
+						if (mouseY>149&&mouseY<215) {
+							state = "Character";
+						}
+						if (mouseY>224&&mouseY<290) {
+							state = "HowTo";
+						}
+						if (mouseY>299&&mouseY<364) {
+							println("Nate is a nice programmer.\nHe makes cool games and animations.");
+						}
+					}
+				}
+				if (state==="Character") {
+					if (mouseX>10&&mouseX<175&&mouseY>140&&mouseY<240) {
+						player = 0;
+					}
+					if (mouseX>175&&mouseX<338&&mouseY>140&&mouseY<240) {
+						if (coinCount>=5) {
+							player = 1;
+						}
+					}
+					if (mouseX>338&&mouseY>140&&mouseY<240) {
+						if (coinCount>=10) {
+							player = 2;
+						}
+					}
+					if (mouseX>87&&mouseX<250&&mouseY>265&&mouseY<365) {
+						if (coinCount>=15) {
+							player = 3;
+						}
+					}
+					if (mouseX>250&&mouseX<413&&mouseY>265&&mouseY<365) {
+						if (coinCount>=20) {
+							player = 4;
+						}
+					}
+					if (mouseX<150&&mouseY<75) {
+						state = "Menu";
+					}
+				}
+				if (state==="HowTo") {
+					if (mouseX<150&&mouseY<75) {
+						state = "Menu";
+					}
+				}
+				if (state==="CRASH!") {
+					bad1X = 500;
+					bad2X = 600;
+					speed = 1.5;
+					playerScore = 0;
+					state = "Menu";
+				}
+				
+				cursor(ARROW);
+			};
+			draw = function() {
+				if (state==="Character"|state==="HowTo") {
+					background(100);
+					fill(0,25,255);
+					rect(0,0,500,125);
+					fill(255, 0, 0);
+					textSize(36);
+					text("Back",45,25);
+				}
+				if (state==="Menu") {
+					background(100);
+					fill(0,25,255);
+					rect(0,0,500,125);
+					textAlign(CENTER, CENTER);
+					textFont(createFont("fantasy"));
+					textSize(70);
+					fill(0, 0, 0);
+					text("LANE DODGER", 247, 47);
+					text("LANE DODGER", 248, 48);
+					text("LANE DODGER", 249, 49);
+					fill(200,0,0);
+					text("LANE DODGER", 250, 50);
+					pushMatrix();
+					rotate(-25);
+					fill(0, 0, 0);
+					textSize(txtSize);
+					text(angledText, textPlace-3, textYPlace-3);
+					text(angledText, textPlace-2, textYPlace-2);
+					fill(155,0,0);
+					text(angledText, textPlace-1, textYPlace-1);
+					txtSize+=txtSizeV;
+					if (txtSize < 15){
+						txtSizeV+=0.1;
+					} else {
+						txtSizeV-=0.05;
+					}
+					popMatrix();
+					badGuy(350,myY[0]);
+					badGuy(350,myY[1]);
+					badGuy(350,myY[2]);
+					myPlayer(50,myY[1]);
+					fill(0);
+					textSize(txtSize+10);
+					text("Play", 90, 250);
+					text("Character",410,185);
+					text("How To",410,260);
+					text("Nate",410,335);
+					cursor(ARROW);
+					if (mouseX>29&&mouseX<150&&mouseY>224&&mouseY<290) {
+						cursor(HAND);
+					}
+					if (mouseX>350&&mouseX<471) {
+						if (mouseY>149&&mouseY<215) {
+							cursor(HAND);
+						}
+						if (mouseY>224&&mouseY<290) {
+							cursor(HAND);
+						}
+						if (mouseY>299&&mouseY<364) {
+							cursor(HAND);
+						}
+					}
+				}
+				if (state==="Play") {
+					if (bad1X<-90) {
+						badRand1+=1;
+						bad1X = 500;
+						playerScore+=1;
+						if (speed<9) {
+							speed+=0.5;
+						}
+					}
+					if (bad2X<-90) {
+						badRand2+=1;
+						bad2X = 550;
+						playerScore+=1;
+					}
+					if (coinX<-90) {
+						coinRand+=1;
+						coinX = 1111+(2*speed);
+					}
+					if (coinRand>22) {
+						coinRand = 0;
+					}
+					if (badRand1>22) {
+						badRand1 = 0;
+					}
+					if (badRand2>22) {
+						badRand2 = 0;
+					}
+						bad1X-=speed;
+						bad2X-=speed;
+						coinX-=speed;
+					if (coinX>-40&&coinX<150&&why===badY[coinRand]) {
+						coinCount+=1;
+						playerScore+=1;
+						coinX = -100;
+					}
+					if (bad1X>-40&&bad1X<150&&why===badY[badRand1]) {
+						state = "CRASH!";
+					}
+					if (bad2X>-40&&bad2X<150&&why===badY[badRand2]) {
+						state = "CRASH!";
+					}
+					background(100);
+					fill(0,25,255);
+					rect(0,0,500,125);
+					myPlayer(50,myY[why],true,player);
+					badGuy(bad1X,myY[badY[badRand1]],true);
+					badGuy(bad2X,myY[badY[badRand2]],true);
+					coins(coinX,myY[badY[coinRand]],1,1);
+					textSize(24);
+					textAlign(LEFT,BOTTOM);
+					textFont(createFont("fantasy"));
+					text("Score: "+playerScore,25,50);
+					text("Total Coins: "+coinCount,25,100);
+				}
+				if (state==="Character") {
+					textFont(createFont("fantasy"));
+					textAlign(CENTER,CENTER);
+					textSize(64);
+					fill(255, 0, 0);
+					text("Character",250,50);
+					textSize(20);
+					text("Coins: "+coinCount,250,100);
+					pushMatrix();
+					scale(1.25,1.25);
+					myPlayer(35,120,true,0);
+					myPlayer(165,120,true,1);
+					myPlayer(295,120,true,2);
+					myPlayer(95,220,true,3);
+					myPlayer(225,220,true,4);
+					popMatrix();
+					fill(0,0,0,150);stroke(0,0,0);
+					textAlign(CENTER,CENTER);
+					if (coinCount<5) {
+						rect(175,140,163,100);
+						fill(155,0,0);
+						text("Cost: 5 Coins", 260, 195);
+					}
+					fill(0,0,0,150);stroke(0,0,0);
+					if (coinCount<10) {
+						rect(338,140,163,100);
+						fill(155,0,0);
+						text("Cost: 10 Coins", 420, 195);
+					}
+					fill(0,0,0,150);stroke(0,0,0);
+					if (coinCount<15) {
+						rect(87,265,163,100);
+						fill(155,0,0);
+						text("Cost: 15 Coins", 170, 320);
+					}
+					fill(0,0,0,150);stroke(0,0,0);
+					if (coinCount<20) {
+						rect(250,265,163,100);
+						fill(155,0,0);
+						text("Cost: 20 Coins", 330, 320);
+					}
+					noStroke();
+					//text("x: "+mouseX+"\ny: "+mouseY, 100,200);
+				}
+				if (state==="HowTo") {
+					textAlign(CENTER, CENTER);
+					textFont(createFont("fantasy"));
+					textSize(70);
+					fill(200,0,0);
+					text("HOW TO PLAY", 250, 70);
+					textSize(24);
+					text("You",90,myY[0]+50);
+					text("Don't Hit These",410,myY[0]+50);
+					text("Hit These",250,myY[0]-20);
+					text("Go up\n\n\n\n\nGo Down",250,myY[1]+85);
+					badGuy(350,myY[1],true);
+					myPlayer(50,myY[1],true,0);
+					coins(250,myY[0],1,1);
+					fill(255,255,255,50);stroke(0);
+					rect(225,260,50,50);
+					rect(225,310,50,50);
+					rect(175,310,50,50);
+					rect(275,310,50,50);
+					triangle(230,300,270,300,250,275);
+					triangle(230,320,270,320,250,345);
+					noStroke();
+				}
+				if (state==="CRASH!") {
+					textFont(createFont("fantasy"));
+					background(60);
+					textAlign(CENTER,CENTER);
+					textSize(64);
+					text("YOU CRASHED!!!\nYour Score:\n\n\nClick to Try Again",250,200);
+					textSize(100);
+					text(playerScore,250,240);
+				}
+			};
+          }
+        }
+      },
+      {
+        id: 3,
+        type: "3d",
+        title: "3D Astronaut",
+        description: "Low-poly 3D astronaut character I designed, modeled and textured.",
+        date: "8/10/2026",
+        author: "Nathan Taylor",
+        languages: "3D Design / GLTF",
+        link: "#",
+        width: 400,
+        height: 400,
+        modelSrc: "images/3dmodels/astronaut.glb"
+      },
+	  {
+        id: 4,
+        type: "3d",
+        title: "3D Moon Lander",
+        description: "3D Moon lander I designed, modeled and textured.",
+        date: "5/9/2026",
+        author: "Nathan Taylor",
+        languages: "3D Design / GLTF",
+        link: "#",
+        width: 400,
+        height: 400,
+        modelSrc: "images/3dmodels/lunarlander.glb"
+      },
+	  {
+        id: 5,
+        type: "3d",
+        title: "3D Shipping Container",
+        description: "3D shipping container I designed, modeled and textured.",
+        date: "8/5/2026",
+        author: "Nathan Taylor",
+        languages: "3D Design / GLTF",
+        link: "#",
+        width: 400,
+        height: 400,
+        modelSrc: "images/3dmodels/Shipping_Container.glb"
+      },
+	  {
+        id: 6,
+        type: "3d",
+        title: "3D Phone Holder",
+        description: "3D phone holder I designed and modeled for 3D printing.",
+        date: "8/5/2026",
+        author: "Nathan Taylor",
+        languages: "3D Design / GLTF",
+        link: "#",
+        width: 400,
+        height: 400,
+        modelSrc: "images/3dmodels/phoneholders.glb"
+      }
+    ];
+
+    function renderCards() {
+      var container = document.getElementById("cardContainer");
+      container.innerHTML = "";
+
+      projects.forEach(function(proj, index) {
+        var card = document.createElement("div");
+        card.className = "thumb-card" + (index === 0 ? " active" : "");
+        card.id = "card-" + index;
+        card.onclick = function() { selectProject(index); };
+        
+        // Show indicator if it's 3D or Code
+        card.textContent = proj.type === "3d" ? "3D #" + (index + 1) : "JS #" + (index + 1);
+
+        container.appendChild(card);
+      });
+    }
+
+    function selectProject(index) {
+      // Exit active processing script if currently running
+      if (currentProcessingInstance) {
+        currentProcessingInstance.exit();
+        currentProcessingInstance = null;
+      }
+
+      var cards = document.querySelectorAll(".thumb-card");
+      cards.forEach(function(c) { c.classList.remove("active"); });
+      document.getElementById("card-" + index).classList.add("active");
+
+      var selected = projects[index];
+      var canvas = document.getElementById("myCanvas");
+      var modelViewer = document.getElementById("myModelViewer");
+      var mediaBox = document.getElementById("mediaBox");
+
+      // Set display box width & height according to project
+      mediaBox.style.width = selected.width + "px";
+      mediaBox.style.height = selected.height + "px";
+
+      // TOGGLE DISPLAY TYPE
+      if (selected.type === "3d") {
+        // Hide Canvas, Show 3D Viewer
+        canvas.style.display = "none";
+        modelViewer.style.display = "block";
+        modelViewer.src = selected.modelSrc;
+      } else {
+        // Hide 3D Viewer, Show Canvas & Run Processing
+        modelViewer.style.display = "none";
+        canvas.style.display = "block";
+        currentProcessingInstance = new Processing(canvas, selected.code);
+      }
+
+      // Update Info Text Panel
+      document.getElementById("projectTitle").textContent = selected.title;
+      document.getElementById("projectDescription").textContent = selected.description;
+      document.getElementById("projectDate").textContent = selected.date;
+      document.getElementById("projectAuthor").textContent = selected.author;
+      document.getElementById("projectLang").textContent = selected.languages;
+      //document.getElementById("projectLink").href = selected.link;
+    }
+
+    window.onload = function() {
+      renderCards();
+      selectProject(0);
+    };
+  </script>
+
+</body>
+</html>
